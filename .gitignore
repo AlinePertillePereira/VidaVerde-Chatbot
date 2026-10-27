@@ -1,0 +1,11 @@
+﻿docker/n8n_data/
+docker/evolution/
+*.sqlite
+*.db
+.env
+.env.*
+qr.png
+qr.txt
+qrcode.png
+qrcode-vidaverde.png
+pairing.txt
