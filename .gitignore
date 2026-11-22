@@ -9,3 +9,10 @@ qr.txt
 qrcode.png
 qrcode-vidaverde.png
 pairing.txt
+
+# Protecao de credenciais e arquivos sensiveis
+*.pem
+*.key
+*credentials*.json
+secrets/
+node_modules/

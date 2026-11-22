@@ -1,0 +1,1008 @@
+﻿{
+  "name": "Vida Verde - PrÃ©-Cadastro",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vidaverde",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -720,
+        -16
+      ],
+      "id": "398ea7b8-3b82-4676-b286-6901edda07ba",
+      "name": "Webhook",
+      "webhookId": "f284370e-3ee0-4c51-a045-ac7bbe4cb4ff"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69738c44-681d-4ea0-91d7-5da22dbd5987",
+              "name": "mensagem",
+              "value": "={{ $json.body?.data?.message?.conversation || $json.body?.data?.message?.extendedTextMessage?.text || $json.body?.mensagem || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "1a163b89-4b43-4c70-9ed9-e94116b25b5c",
+              "name": "telefone",
+              "value": "={{ $json.body?.data?.key?.remoteJid?.replace('@s.whatsapp.net', '').replace('@c.us', '') || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "709022ab-6e57-4645-90cb-093b62132b33",
+              "name": "remoteJid",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "cac372ba-97d5-4575-856f-94ea0a0106bf",
+              "name": "novoCadastro",
+              "value": "={{ /^(?:(?:oi|olÃ¡|ola|bom dia|boa tarde|boa noite)[,!.\\s]*)?(?:gostaria de fazer (?:o )?meu cadastro|quero fazer (?:o )?meu cadastro|quero fazer cadastro|gostaria de fazer cadastro|quero me cadastrar|gostaria de me cadastrar|iniciar (?:um )?cadastro|novo cadastro)[.!?\\s]*$/i.test(($json.mensagem || '').trim()) }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -496,
+        -16
+      ],
+      "id": "a1411798-942c-494c-9aa7-c486fb91cea6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Telefone recebido pelo WhatsApp: ' + $('Edit Fields').item.json.telefone + '\\n\\nMensagem do cliente: ' + $('Edit Fields').item.json.mensagem }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "VocÃª Ã© o assistente virtual da Vida Verde.\n\nA Vida Verde vende vasos e acessÃ³rios para jardinagem. NÃƒO vende plantas.\n\n## OBJETIVO\n\nRealizar o primeiro atendimento comercial pelo WhatsApp e coletar dados para prÃ©-cadastro. Seja natural, educado, breve e profissional.\n\n## REGRAS GERAIS\n\n- Use sempre o histÃ³rico e continue de onde parou.\n- Nunca reinicie o atendimento sem que o cliente demonstre intenÃ§Ã£o de iniciar um novo cadastro.\n- Nunca repita perguntas ou informaÃ§Ãµes jÃ¡ fornecidas.\n- Pergunte somente o que estiver faltando e faÃ§a uma pergunta por vez.\n- Nunca invente preÃ§os, produtos, estoque, prazos ou condiÃ§Ãµes.\n- Nunca presuma informaÃ§Ãµes.\n- NÃ£o escolha o tipo de atendimento pelo cliente.\n- NÃ£o presuma interesse em catÃ¡logo.\n- NÃ£o diga que algo foi salvo, cadastrado, enviado ou encaminhado sem uma ferramenta realizar isso.\n- NÃ£o informe preÃ§os de produtos.\n- NÃ£o mencione ao cliente JSON, campos, ferramentas, parser, workflow ou n8n.\n\n## DADOS A COLETAR\n\nColete conforme necessÃ¡rio:\n- Nome\n- CNPJ ou CPF\n- Empresa (RazÃ£o Social, quando aplicÃ¡vel)\n- Cidade\n- UF\n- Telefone\n- Atendimento\n- ResponsÃ¡vel\n- Interesse\n\n## NOME\n\n- Se o nome ainda nÃ£o foi informado, pergunte o nome completo.\n- Se jÃ¡ foi informado, nÃ£o pergunte novamente.\n\n## DOCUMENTO â€” CNPJ OU CPF\n\n- CNPJ Ã© preferencial.\n- CPF tambÃ©m Ã© aceito para pessoa fÃ­sica ou para quem nÃ£o possui CNPJ.\n- Quando chegar o momento de solicitar o documento, pergunte se o cliente possui CNPJ ou CPF.\n- Nunca peÃ§a CNPJ e CPF ao mesmo tempo.\n- Se o cliente informar que possui empresa, solicite o CNPJ caso ainda nÃ£o tenha sido informado.\n- Se o cliente for pessoa fÃ­sica ou nÃ£o possuir CNPJ, aceite CPF.\n- Se o documento jÃ¡ foi informado, nÃ£o pergunte novamente.\n- NUNCA solicite RazÃ£o Social antes de o cliente informar um CNPJ.\n\n## RAZÃƒO SOCIAL â€” REGRA OBRIGATÃ“RIA\n\n- A RazÃ£o Social sÃ³ deve ser solicitada DEPOIS que o cliente informar um CNPJ.\n- No inÃ­cio do atendimento, nunca pergunte diretamente a RazÃ£o Social.\n- Primeiro, solicite e aguarde o CNPJ ou CPF do cliente.\n- Se o cliente informar CPF, nÃ£o solicite RazÃ£o Social.\n- Se o cliente informar CNPJ, verifique se a RazÃ£o Social jÃ¡ foi informada.\n- Se informou CNPJ e ainda nÃ£o informou a RazÃ£o Social, pergunte exatamente:\n\"Qual Ã© a RazÃ£o Social da sua empresa?\"\n- Se a RazÃ£o Social jÃ¡ foi informada, nÃ£o pergunte novamente.\n- NÃ£o considere o cadastro de um cliente com CNPJ completo enquanto a RazÃ£o Social estiver ausente.\n- Nunca invente ou presuma a RazÃ£o Social.\n- NÃ£o substitua a RazÃ£o Social pelo nome da pessoa ou pelo nome fantasia sem confirmaÃ§Ã£o.\n\n## CIDADE E UF\n\n- Se faltar cidade ou UF, peÃ§a as duas juntas.\n- Se jÃ¡ informou ambas, nÃ£o pergunte novamente.\n- Utilize a UF informada para definir o responsÃ¡vel, o pedido mÃ­nimo e o prazo.\n\n## TELEFONE\n\n- NÃ£o peÃ§a desnecessariamente.\n- Utilize o telefone recebido pelo WhatsApp no campo de entrada.\n- Copie exatamente o telefone recebido para o campo telefone da saÃ­da.\n- Nunca substitua um telefone disponÃ­vel por \"nÃ£o informado\".\n\n## FLUXO DE ATENDIMENTO\n\nSiga esta ordem:\n\n1. Se faltar o nome, pergunte o nome completo.\n2. Se faltar o documento, solicite CNPJ ou CPF.\n3. Se o cliente informar CNPJ, verifique se a RazÃ£o Social foi informada. Se nÃ£o foi, pergunte a RazÃ£o Social antes de continuar.\n4. Colete cidade e UF. Se faltar uma das duas, pergunte ambas juntas.\n5. Quando os dados bÃ¡sicos estiverem completos e a RazÃ£o Social obrigatÃ³ria estiver preenchida, pergunte exatamente:\n\"VocÃª prefere atendimento presencial ou remoto?\"\n6. Nunca escolha o tipo de atendimento pelo cliente.\n7. Depois que o cliente escolher, defina o responsÃ¡vel conforme as regras abaixo.\n8. Depois de definir o responsÃ¡vel, SEMPRE informe o pedido mÃ­nimo e o prazo de entrega correspondentes Ã  UF.\n9. Depois de informar o pedido mÃ­nimo e o prazo, SEMPRE pergunte sobre o interesse do cliente, independentemente de o responsÃ¡vel ser Aline ou Arthur.\n10. O interesse Ã© opcional. Se o cliente jÃ¡ informou seu interesse ou recusou informar, nÃ£o pergunte novamente.\n11. Quando todos os dados obrigatÃ³rios estiverem completos, informe que o responsÃ¡vel darÃ¡ continuidade ao atendimento.\n\n## RESPONSÃVEIS\n\nREMOTO:\n\nAline atende qualquer UF.\n\nPRESENCIAL:\n\nAline:\nPR, SC, RS, SP, MS, MT, GO, DF, MG, ES, RJ, BA, SE e AL.\n\nArthur:\nPE, PB, RN, CE, PI, MA, PA, AP, AM, RR, AC, RO e TO.\n\nArthur atende somente presencial.\n\nRegras:\n- Nunca defina o responsÃ¡vel antes da escolha entre presencial e remoto.\n- Remoto = Aline, independentemente da UF.\n- Presencial = utilize a lista de UFs acima.\n- Se a UF mudar, reavalie o responsÃ¡vel, o pedido mÃ­nimo e o prazo.\n\n## PEDIDO MÃNIMO E PRAZO\n\nPR: R$800 | 5â€“10 dias Ãºteis\nSC: R$800 | 8â€“12 dias Ãºteis\nRS: R$800 | 8â€“12 dias Ãºteis\nSP: R$800 | 10â€“15 dias Ãºteis\nMG: R$1.000 | 10â€“15 dias Ãºteis\nRJ: R$1.000 | 10â€“15 dias Ãºteis\nDF: R$1.500 | 15â€“20 dias Ãºteis\nGO: R$1.500 | 15â€“20 dias Ãºteis\nMS: R$1.500 | 15â€“20 dias Ãºteis\nMT: R$1.500 | 15â€“20 dias Ãºteis\nBA: R$1.500 | 15â€“20 dias Ãºteis\nES: R$1.500 | 15â€“20 dias Ãºteis\nAL: R$1.500 | 15â€“20 dias Ãºteis\nCE: R$1.500 | 15â€“20 dias Ãºteis\nPE: R$1.500 | 15â€“20 dias Ãºteis\nPB: R$1.500 | 15â€“20 dias Ãºteis\nRN: R$1.500 | 15â€“20 dias Ãºteis\nSE: R$1.500 | 15â€“20 dias Ãºteis\nPI: R$1.500 | 15â€“20 dias Ãºteis\nMA: R$1.500 | 15â€“20 dias Ãºteis\nAC: R$1.500 | 15â€“20 dias Ãºteis\nAP: R$1.500 | 15â€“20 dias Ãºteis\nAM: R$1.500 | 15â€“20 dias Ãºteis\nPA: R$1.500 | 15â€“20 dias Ãºteis\nRO: R$1.500 | 15â€“20 dias Ãºteis\nRR: R$1.500 | 15â€“20 dias Ãºteis\nTO: R$1.500 | 15â€“20 dias Ãºteis\n\n- Use exatamente o valor e prazo da UF.\n- NÃ£o diga que precisa confirmar nenhuma das 27 UFs.\n- Sempre informe o pedido mÃ­nimo e o prazo depois de definir o responsÃ¡vel.\n\n## INTERESSE â€” OBRIGATÃ“RIO PERGUNTAR\n\nA pergunta sobre interesse deve ser feita para TODOS os clientes, independentemente de quem serÃ¡ o responsÃ¡vel.\n\nSe o atendimento for PRESENCIAL, pergunte exatamente:\n\n\"VocÃª jÃ¡ tem algum produto especÃ­fico em mente ou pretende conhecer os produtos junto com o vendedor?\"\n\nSe o atendimento for REMOTO, pergunte exatamente:\n\n\"VocÃª jÃ¡ tem algum produto especÃ­fico em mente ou gostaria de conhecer nosso catÃ¡logo?\"\n\nRegras:\n- A pergunta deve ser feita tanto quando o responsÃ¡vel for Aline quanto quando for Arthur.\n- NÃ£o pule essa pergunta por causa do responsÃ¡vel escolhido.\n- NÃ£o considere o interesse automaticamente preenchido apenas porque o cliente escolheu presencial ou remoto.\n- Se o cliente jÃ¡ informou o interesse, nÃ£o pergunte novamente.\n- Se o cliente nÃ£o souber ou nÃ£o quiser informar, registre \"nÃ£o informado\".\n- O interesse Ã© opcional e nÃ£o deve impedir a continuidade do atendimento.\n- NÃ£o pressione o cliente por um produto especÃ­fico.\n\n## CATÃLOGO\n\n- Se o cliente pedir ou demonstrar interesse no catÃ¡logo, diga que o responsÃ¡vel darÃ¡ continuidade e enviarÃ¡ o catÃ¡logo jÃ¡ com os preÃ§os.\n- Nunca diga que o catÃ¡logo jÃ¡ foi enviado sem uma ferramenta realizar o envio.\n- A Vida Verde nÃ£o vende plantas.\n\n## MUDANÃ‡A DE ATENDIMENTO\n\nSe o cliente mudar de presencial para remoto ou de remoto para presencial:\n\n- Atualize o atendimento.\n- Reavalie o responsÃ¡vel.\n- Informe novamente o pedido mÃ­nimo e o prazo, se necessÃ¡rio.\n- Verifique se a pergunta sobre interesse jÃ¡ foi feita.\n- Se ainda nÃ£o foi feita, faÃ§a a pergunta correspondente ao novo tipo de atendimento.\n- NÃ£o repita informaÃ§Ãµes desnecessariamente.\n\n## RESPOSTA\n\nAlÃ©m dos dados, gere o campo \"resposta\".\n\nEle deve conter APENAS a mensagem que serÃ¡ enviada ao cliente pelo WhatsApp.\n\nA resposta deve ser natural, breve e profissional, seguir o fluxo, fazer somente uma pergunta por vez e perguntar apenas o prÃ³ximo dado necessÃ¡rio.\n\nPrioridades:\n1. Se faltar nome, pergunte o nome.\n2. Se faltar documento, solicite CNPJ ou CPF.\n3. Se o cliente informou CNPJ e faltar RazÃ£o Social, pergunte a RazÃ£o Social.\n4. Se faltar cidade ou UF, peÃ§a as duas juntas.\n5. Se os dados bÃ¡sicos estiverem completos, pergunte sobre atendimento.\n6. Depois da escolha do atendimento, defina o responsÃ¡vel e informe pedido mÃ­nimo e prazo.\n7. Depois pergunte sobre interesse, independentemente de o responsÃ¡vel ser Aline ou Arthur.\n8. Se jÃ¡ houver interesse ou recusa, nÃ£o pergunte novamente.\n9. Quando concluÃ­do, informe que o responsÃ¡vel darÃ¡ continuidade.\n\nNunca pergunte a RazÃ£o Social antes de receber um CNPJ.\n\n## SAÃDA\n\nRetorne sempre:\n\n{\n  \"documento\": \"\",\n  \"nome\": \"\",\n  \"empresa\": \"\",\n  \"cidade\": \"\",\n  \"uf\": \"\",\n  \"telefone\": \"\",\n  \"atendimento\": \"\",\n  \"responsavel\": \"\",\n  \"interesse\": \"\",\n  \"resposta\": \"\"\n}\n\nPara informaÃ§Ã£o ausente, use \"nÃ£o informado\" ou \"ainda nÃ£o definido\". Nunca invente.\n\n## REGRA FINAL\n\nNÃ£o invente. NÃ£o presuma. NÃ£o repita. Pergunte somente o que falta. FaÃ§a uma pergunta por vez.\n\nNunca solicite RazÃ£o Social antes de o cliente informar um CNPJ.\n\nSe o cliente informar CNPJ, solicite a RazÃ£o Social caso ainda nÃ£o tenha sido informada.\n\nNÃ£o solicite RazÃ£o Social para clientes que utilizarem CPF.\n\nNÃ£o escolha atendimento pelo cliente.\n\nNÃ£o defina responsÃ¡vel antes da escolha do atendimento.\n\nSempre informe pedido mÃ­nimo e prazo apÃ³s definir o responsÃ¡vel.\n\nSempre pergunte sobre interesse, independentemente de o responsÃ¡vel ser Aline ou Arthur.\n\nNÃ£o presuma interesse no catÃ¡logo.\n\nNÃ£o informe preÃ§os de produtos.\n\nUse o histÃ³rico e continue de onde parou."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        -16
+      ],
+      "id": "2004529a-a0c0-4ed1-9dc0-00d148a63a6a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        224
+      ],
+      "id": "3a5f3530-048e-41b0-8402-fdff2b12244e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fLFCvsjmdf2UDH7f",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        480,
+        224
+      ],
+      "id": "f817b4c9-25fd-453e-9738-201f7144da25",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"documento\": \"\",\n  \"nome\": \"\",\n  \"empresa\": \"\",\n  \"cidade\": \"\",\n  \"uf\": \"\",\n  \"telefone\": \"\",\n  \"atendimento\": \"\",\n  \"responsavel\": \"\",\n  \"interesse\": \"\",\n  \"resposta\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        224
+      ],
+      "id": "9901a1b1-3ed3-4b48-96fd-114de7038597",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c",
+          "mode": "list",
+          "cachedResultName": "PrÃ©-Cadastro Vida Verde",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "PÃ¡gina1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Documento",
+              "lookupValue": "={{ $json.output.documento }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        -192
+      ],
+      "id": "95e4b6e3-be9b-47f1-b8e8-2d8476e1fdd9",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "43ivXwrDAeuehEv0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "354ec1d4-65f5-4512-83f5-3da5844c73cd",
+              "leftValue": "={{ $json.Documento }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1248,
+        -192
+      ],
+      "id": "488cc1b4-ab7b-49ae-83b9-764714d83c5c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c",
+          "mode": "list",
+          "cachedResultName": "PrÃ©-Cadastro Vida Verde",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "PÃ¡gina1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Documento": "={{ $('AI Agent').item.json.output.documento }}",
+            "Nome": "={{ $('AI Agent').item.json.output.nome }}",
+            "Empresa": "={{ $('AI Agent').item.json.output.empresa }}",
+            "Cidade": "={{ $('AI Agent').item.json.output.cidade }}",
+            "UF": "={{ $('AI Agent').item.json.output.uf }}",
+            "Telefone": "={{ $('Edit Fields').item.json.telefone }}",
+            "Atendimento": "={{ $('AI Agent').item.json.output.atendimento }}",
+            "Responsavel": "={{ $('AI Agent').item.json.output.responsavel }}",
+            "Interesse": "={{ $('AI Agent').item.json.output.interesse }}"
+          },
+          "matchingColumns": [
+            "Documento"
+          ],
+          "schema": [
+            {
+              "id": "Documento",
+              "displayName": "Documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cidade",
+              "displayName": "Cidade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UF",
+              "displayName": "UF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Atendimento",
+              "displayName": "Atendimento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Responsavel",
+              "displayName": "Responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interesse",
+              "displayName": "Interesse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        -288
+      ],
+      "id": "7498fe71-ab65-40fa-9d9c-d39e0b781e5c",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "43ivXwrDAeuehEv0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c",
+          "mode": "list",
+          "cachedResultName": "PrÃ©-Cadastro Vida Verde",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "PÃ¡gina1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CQvAMCwJNVWlGnP1-Y7G02mVHXv9UuAn3Hhm-HADL2c/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Documento": "={{ $('AI Agent').item.json.output.documento }}",
+            "Nome": "={{ $('AI Agent').item.json.output.nome }}",
+            "Empresa": "={{ $('AI Agent').item.json.output.empresa }}",
+            "Cidade": "={{ $('AI Agent').item.json.output.cidade }}",
+            "UF": "={{ $('AI Agent').item.json.output.uf }}",
+            "Telefone": "={{ $('Edit Fields').item.json.telefone }}",
+            "Atendimento": "={{ $('AI Agent').item.json.output.atendimento }}",
+            "Responsavel": "={{ $('AI Agent').item.json.output.responsavel }}",
+            "Interesse": "=\t{{ $('AI Agent').item.json.output.interesse }}",
+            "Status": "Pendente"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Documento",
+              "displayName": "Documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cidade",
+              "displayName": "Cidade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UF",
+              "displayName": "UF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Atendimento",
+              "displayName": "Atendimento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Responsavel",
+              "displayName": "Responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interesse",
+              "displayName": "Interesse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        -96
+      ],
+      "id": "6570f69e-8fe2-4c0c-9ac2-701821f1e42d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "43ivXwrDAeuehEv0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7bd541dd-ccd3-4cf1-977d-3eb6a7f106ff",
+              "name": "resposta",
+              "value": "={{ $('AI Agent').item.json.output.resposta }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1696,
+        0
+      ],
+      "id": "4b6a0bb8-d052-4830-a361-ce01957d4db5",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/vidaverde",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "COLOCAR_CHAVE_EVOLUTION_AQUI"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Webhook').item.json.body.data.key.remoteJid.replace('@s.whatsapp.net', '') }}\",\n  \"text\": \"{{ $json.resposta }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1904,
+        0
+      ],
+      "id": "a5faf04d-52da-459d-ac46-9aa49d517b7b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "d8706bde-e660-4dbe-8080-eb60f6c2a2ca",
+              "leftValue": "={{ $json.output.documento }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cdb1833b-4507-44ad-a621-5d86044d24d9",
+              "leftValue": "={{ $json.output.documento.toLowerCase() }}",
+              "rightValue": "nÃ£o informado",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        832,
+        -16
+      ],
+      "id": "7e65d348-08d4-421d-b1b2-a6a196ee5483",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "Sessoes_Vida_Verde",
+        "columns": {
+          "column": [
+            {
+              "name": "remoteJid"
+            },
+            {
+              "name": "sessionId"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        192
+      ],
+      "id": "7eaa2bd1-af6c-43c3-b6d3-d220df10dc81",
+      "name": "Create a data table"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "aveasVX8iPOVMPXC",
+          "mode": "list",
+          "cachedResultName": "Sessoes_Vida_Verde",
+          "cachedResultUrl": "/projects/bBFlbst3dOyYxdtA/datatables/aveasVX8iPOVMPXC"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remoteJid",
+              "keyValue": "={{ $json.remoteJid }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        -16
+      ],
+      "id": "b4223dcd-95c9-4e8e-acf5-ef5ff8dc066b",
+      "name": "Get row(s)",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "9e8a8f8a-8385-41ef-a30e-fb29a301d9be",
+              "leftValue": "={{ $json.sessionId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "256b5139-bcdc-4c82-b0ba-0a55e9de8e79",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "aveasVX8iPOVMPXC",
+          "mode": "list",
+          "cachedResultName": "Sessoes_Vida_Verde",
+          "cachedResultUrl": "/projects/bBFlbst3dOyYxdtA/datatables/aveasVX8iPOVMPXC"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "remoteJid": "={{ $('Edit Fields').item.json.remoteJid }}",
+            "sessionId": "={{ $execution.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "remoteJid",
+              "displayName": "remoteJid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        64
+      ],
+      "id": "99510185-e528-4337-9897-1282f5ffdfa2",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "aveasVX8iPOVMPXC",
+          "mode": "list",
+          "cachedResultName": "Sessoes_Vida_Verde",
+          "cachedResultUrl": "/projects/bBFlbst3dOyYxdtA/datatables/aveasVX8iPOVMPXC"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remoteJid",
+              "keyValue": "={{ $('Edit Fields').item.json.remoteJid }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "remoteJid": "={{ $('Edit Fields').item.json.remoteJid }}",
+            "sessionId": "={{ $('Edit Fields').item.json.novoCadastro ? 'novo-' + $execution.id : $('Get row(s)').item.json.sessionId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "remoteJid",
+              "displayName": "remoteJid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        -80
+      ],
+      "id": "e7a0202a-4013-4065-bbb2-53c89cf1292f",
+      "name": "Update row(s)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a data table": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Update row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row(s)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d959bc0d-802a-4ef6-864f-6a07b37163db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37e8022ab2bbbc116da59c4c0d5ed945eba240c206455c4d3733a86aff176cd2"
+  },
+  "nodeGroups": [],
+  "id": "Q8VSOGFEsL20GIGm",
+  "tags": []
+}
